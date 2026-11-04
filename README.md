@@ -45,7 +45,17 @@ Optional extras, all off by default (see Settings): a rolling seven-day week, Is
 | Calendar chips in the toolbar | Off | Coloured rings in the toolbar: click one to show only that calendar, Shift-click to hide or show it. |
 | Busy-day shading in the year view | Off | Tints each day of the year view by how many events it has. |
 | Layered overlap layout | Off | Overlapping events stack in layers with a visible side strip instead of sitting side by side ([rules](docs/LAYOUT-RULES.md)). |
-| Striped look for long repeating events | Off | Repeating timed events at least as long as the threshold (default 240 minutes) are drawn striped, behind other events. |
+| Striped look for long repeating events | Off | Repeating timed events at least as long as the threshold are drawn striped, behind other events. Apple Calendar does not do this. |
+| Striped look threshold (minutes) | 240 | Minimum length for the striped look (30 or more). Only used when the striped look is on. |
+
+## Known limits
+
+- **Hard dependency.** The skin does nothing without Full Calendar Remastered, and stops working if that plugin is disabled.
+- **Uses Full Calendar's internals.** It relies on the plugin's view objects and class names (`app.plugins.plugins['full-calendar-remastered']`, its calendar view, its rendered event segments and `.ofc-calendar-container`) and on the FullCalendar instance behind them. None of these are public APIs, so a Full Calendar update can break the skin.
+- **Polling.** Full Calendar re-renders without notifying other plugins, so the skin re-checks the calendar every 2 seconds and repaints what changed.
+- **Main window only.** It works on the main window's `document`. Calendars opened in a pop-out window are not restyled.
+- **Tested only on Full Calendar Remastered 0.13.7.** Other versions may look wrong or break.
+- **Narrow panes.** Full Calendar itself switches its month view to an agenda list when the calendar is narrower than 768 px; the skin cannot change that.
 
 ## How it works
 

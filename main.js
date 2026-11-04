@@ -251,6 +251,7 @@ module.exports = class FcAppleSkin extends Plugin {
 		}
 		// "today first" only applies to the week view (when switched on); other views use the configured first day
 		if (!this.weekToday(vt) && fc.getOption('firstDay') !== this.fd()) fc.setOption('firstDay', this.fd());
+		else if (this.weekToday(vt) && fc.getOption('firstDay') !== new Date().getDay()) { fc.setOption('firstDay', new Date().getDay()); fc.gotoDate(new Date()); }
 	}
 
 	scan() {
@@ -578,6 +579,7 @@ module.exports = class FcAppleSkin extends Plugin {
 		if (t) {
 			let m = t.nextElementSibling;
 			if (!m || !m.classList.contains('fcas-title')) { m = createSpan({ cls: 'fcas-title' }); t.after(m); }
+			box.querySelectorAll('.fcas-title').forEach(x => { if (x !== m) x.remove(); });   // Full Calendar moved its title (toolbar re-layout): drop the stale mirror
 			const tt = this.titleParts(fc);
 			const key = tt.main + '|' + tt.sub + '|' + tt.hijri;
 			if (m.dataset.src !== key) {
