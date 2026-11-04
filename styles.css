@@ -1,10 +1,11 @@
 /* Full Calendar — Apple skin. Everything is scoped to .fcas (added by main.js to .ofc-calendar-container). */
 .fcas{
+	--fcas-bg: var(--background-primary);
 	--fcas-red: #ff3b30;
 	--fcas-line: color-mix(in srgb, var(--text-normal) 9%, transparent);
 	--fcas-line-strong: color-mix(in srgb, var(--text-normal) 16%, transparent);
 	--fc-border-color: var(--fcas-line);
-	--fc-page-bg-color: var(--background-primary);
+	--fc-page-bg-color: var(--fcas-bg);
 	--fc-neutral-bg-color: transparent;
 	--fc-today-bg-color: transparent;
 	--fc-now-indicator-color: var(--fcas-red);
@@ -41,7 +42,7 @@
 	font-size: 11px; color: var(--text-faint); font-weight: 500;
 }
 .fcas .fc-timegrid-slot-label{ vertical-align: top; }
-.fcas .fc-timegrid-slot-label-cushion{ position: relative; top: -0.75em; background: var(--background-primary); padding: 0 6px 0 0; }
+.fcas .fc-timegrid-slot-label-cushion{ position: relative; top: -0.75em; background: var(--fcas-bg); padding: 0 6px 0 0; }
 
 /* ---------- day header: "Sun 25", today in a red circle ---------- */
 .fcas .ofc-weather-panel{ display: none !important; }
@@ -75,9 +76,9 @@
 .fcas .fc-timegrid-event.fc-v-event,
 .fcas .fc-daygrid-block-event,
 .fcas .fc-timegrid-event-harness-inset .fc-timegrid-event{
-	background: color-mix(in srgb, var(--ev) 26%, var(--background-primary)) !important;
+	background: color-mix(in srgb, var(--ev) 26%, var(--fcas-bg)) !important;
 	border: 0 !important; border-left: 3px solid var(--ev) !important;
-	border-radius: 5px; box-shadow: 0 0 0 1px var(--background-primary) !important;
+	border-radius: 5px; box-shadow: 0 0 0 1px var(--fcas-bg) !important;
 }
 .fcas .fc-event .fc-event-main{
 	color: color-mix(in srgb, var(--ev) 58%, #fff) !important;   /* Apple Calendar dark mode: light tint of the calendar colour */
@@ -347,7 +348,7 @@
 .fcas .fc-timegrid-event .fc-event-time{ display: flex; align-items: center; gap: 3px; }
 .fcas .fc-timegrid-event .fc-event-time::before{ content: ""; width: 9px; height: 9px; flex: none; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v6l4 2'/%3E%3C/svg%3E") center / contain no-repeat; }
 /* repeating long items (a night's sleep, a shift): quieter striped fill, one line, continuation segments blank */
-.fcas .fc-timegrid-event.fcas-routine{ background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ev) 17%, var(--background-primary)) 0 5px, color-mix(in srgb, var(--ev) 9%, var(--background-primary)) 5px 10px) !important; border-left-color: color-mix(in srgb, var(--ev) 70%, transparent) !important; }
+.fcas .fc-timegrid-event.fcas-routine{ background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ev) 17%, var(--fcas-bg)) 0 5px, color-mix(in srgb, var(--ev) 9%, var(--fcas-bg)) 5px 10px) !important; border-left-color: color-mix(in srgb, var(--ev) 70%, transparent) !important; }
 .fcas .fcas-routine .fc-event-time, .fcas .fcas-routine .fcas-loc{ display: none; }
 .fcas .fc-timegrid-event.fcas-routine:not(.fc-event-start) .fc-event-main-frame{ visibility: hidden; }
 .fcas .fc-timegrid-event:not(.fc-event-start){ border-top-left-radius: 0; border-top-right-radius: 0; }
@@ -413,3 +414,31 @@
 /* Full Calendar 0.13+ adds an agenda list under the month grid; the year view replaces the whole grid, so hide it there */
 .ofc-calendar-shell:has(> .fcas-year-on) .ofc-mobile-agenda{ display: none !important; }
 .fcas.fc .fc-daygrid-dot-event.ofc-event-current-or-next{ background: transparent !important; border-color: transparent !important; }
+
+/* ---------- Event left bar: a straight strip like Apple Calendar, not a border that curves with the corners ---------- */
+.fcas .fc-timegrid-event.fc-v-event,
+.fcas .fc-daygrid-block-event,
+.fcas .fc-timegrid-event-harness-inset .fc-timegrid-event{ border-left-color: transparent !important; border-radius: 3px !important; }
+.fcas .fc-daygrid-block-event{ position: relative; }
+.fcas .fc-timegrid-event.fc-v-event::before,
+.fcas .fc-daygrid-block-event::before,
+.fcas .fc-timegrid-event-harness-inset .fc-timegrid-event::before{
+	content: ""; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 0;
+	background: var(--fcas-bar, var(--ev)); pointer-events: none; z-index: 2;
+}
+.fcas .fc-timegrid-event.fc-v-event > .fc-event-main, .fcas .fc-daygrid-block-event > .fc-event-main{ margin-left: 3px; }
+.fcas .fc-timegrid-event.fcas-routine{ --fcas-bar: color-mix(in srgb, var(--ev) 70%, transparent); }
+
+/* ---------- Dark mode: Apple Calendar's neutral charcoal, independent of the Obsidian theme ---------- */
+.theme-dark .fcas.fc{
+	--fcas-bg: #1e1e1e;            /* grid, all-day row, header, gutter */
+	--fcas-line: #272727;          /* hour lines */
+	--fcas-line-strong: #3d3d3d;   /* day dividers, header underline */
+	--fc-border-color: #272727;
+	--fc-page-bg-color: #1e1e1e;
+	--text-muted: #9b9b9b;
+	--text-faint: #8d8d8d;         /* hour labels */
+	background: #1e1e1e;
+}
+.theme-dark .fcas.fc .fc-scrollgrid, .theme-dark .fcas.fc .fc-view-harness, .theme-dark .fcas.fc .fc-scroller{ background: #1e1e1e; }
+.theme-dark .fcas.fc .fc-timegrid-col, .theme-dark .fcas.fc .fc-daygrid-day{ border-color: #3d3d3d; }
