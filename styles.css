@@ -1,0 +1,419 @@
+/* Full Calendar — Apple skin. Everything is scoped to .fcas (added by main.js to .ofc-calendar-container). */
+.fcas{
+	--fcas-red: #ff3b30;
+	--fcas-line: color-mix(in srgb, var(--text-normal) 9%, transparent);
+	--fcas-line-strong: color-mix(in srgb, var(--text-normal) 16%, transparent);
+	--fc-border-color: var(--fcas-line);
+	--fc-page-bg-color: var(--background-primary);
+	--fc-neutral-bg-color: transparent;
+	--fc-today-bg-color: transparent;
+	--fc-now-indicator-color: var(--fcas-red);
+	font-feature-settings: "tnum";
+}
+
+/* ---------- toolbar: big "October 2026", pill buttons ---------- */
+.fcas .fc-header-toolbar.fc-toolbar{ margin: 4px 6px 14px; align-items: center; }
+.fcas .fc-toolbar-title{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.fcas .fcas-title{ font-size: 28px; font-weight: 400; letter-spacing: -0.02em; color: var(--text-muted); white-space: nowrap; }
+.fcas .fcas-title b{ font-weight: 700; color: var(--text-normal) !important; }
+.fcas .fc-button.fc-button-primary{
+	background: color-mix(in srgb, var(--text-normal) 8%, transparent);
+	border: 0; box-shadow: none; color: var(--text-normal);
+	font-size: 13px; font-weight: 500; padding: 4px 11px; border-radius: 7px; text-transform: capitalize;
+}
+.fcas .fc-button.fc-button-primary:hover{ background: color-mix(in srgb, var(--text-normal) 14%, transparent); }
+.fcas .fc-button.fc-button-primary:focus, .fcas .fc-button.fc-button-primary:active{ box-shadow: none !important; }
+.fcas .fc-button-group{ gap: 2px; background: color-mix(in srgb, var(--text-normal) 6%, transparent); border-radius: 8px; padding: 2px; }
+.fcas .fc-button-group > .fc-button{ background: transparent; border-radius: 6px !important; }
+.fcas .fc-button-group > .fc-button:hover{ background: color-mix(in srgb, var(--text-normal) 12%, transparent); }
+
+/* ---------- grid: thin lines, no shaded weekends / off-hours / past ---------- */
+.fcas .fc-scrollgrid{ border: 0 !important; }
+.fcas.fc-theme-standard td, .fcas.fc-theme-standard th{ border-color: var(--fcas-line); }
+.fcas .fc-scrollgrid-section-header > th, .fcas .fc-scrollgrid-section-header td{ border-bottom: 1px solid var(--fcas-line-strong); }
+.fcas .fc-non-business, .fcas .fc-day-sat, .fcas .fc-day-sun, .fcas .fc-day-past,
+.fcas .fc-timegrid-col.fc-day-today, .fcas .fc-daygrid-day.fc-day-today{ background: transparent !important; }
+.fcas .fc-timegrid-slot-minor{ border-top-style: none; }
+/* the whole day fits (expandRows); hide the scrollbar a 1px rounding overflow shows */
+.fcas .fc-timegrid-body, .fcas .fc-timegrid .fc-scroller{ scrollbar-width: none; }
+.fcas .fc-timegrid .fc-scroller::-webkit-scrollbar{ width: 0; height: 0; display: none; }
+.fcas .fc-timegrid-slot-label-cushion, .fcas .fc-timegrid-axis-cushion{
+	font-size: 11px; color: var(--text-faint); font-weight: 500;
+}
+.fcas .fc-timegrid-slot-label{ vertical-align: top; }
+.fcas .fc-timegrid-slot-label-cushion{ position: relative; top: -0.75em; background: var(--background-primary); padding: 0 6px 0 0; }
+
+/* ---------- day header: "Sun 25", today in a red circle ---------- */
+.fcas .ofc-weather-panel{ display: none !important; }
+.fcas .fc-col-header-cell{ border-left-color: transparent; border-right-color: transparent; }
+.fcas .fc-col-header-cell-cushion{
+	display: inline-flex; align-items: center; gap: 6px; padding: 8px 4px 6px !important;
+	font-size: 15px; font-weight: 500; color: var(--text-normal) !important; text-decoration: none !important;
+}
+.fcas .fc-col-header-cell-cushion{ flex-direction: column; gap: 0; }
+.fcas .fcas-top{ display: inline-flex; align-items: center; gap: 6px; }
+.fcas .fcas-hijri{ font-size: 11px; font-weight: 400; color: var(--text-faint); line-height: 1.2; margin-top: 1px; }
+.fcas .fcas-dow{ color: var(--text-muted); font-weight: 500; }
+.fcas .fcas-num{
+	min-width: 26px; height: 26px; padding: 0 4px; box-sizing: border-box;
+	display: inline-flex; align-items: center; justify-content: center; border-radius: 13px;
+	font-size: 17px; font-weight: 600; color: var(--text-normal);
+}
+.fcas .fc-day-today .fcas-dow{ color: var(--text-normal); }
+.fcas .fc-day-today .fcas-num{ background: var(--fcas-red); color: #fff; }
+.fcas .fc-dayGridMonth-view .fc-col-header-cell-cushion{ font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.fcas .fc-daygrid-day-number{ font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: none !important; padding: 4px 6px; }
+.fcas .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{
+	background: var(--fcas-red); color: #fff; border-radius: 12px; min-width: 22px; text-align: center; margin: 2px; padding: 2px 6px;
+}
+.fcas .fc-day-other .fc-daygrid-day-number{ color: var(--text-faint); }
+.fcas .fc-timegrid-axis-cushion{ font-size: 11px; color: var(--text-faint); text-transform: lowercase; }
+
+/* ---------- events: tinted fill, solid left bar, coloured text ---------- */
+.fcas .fc-event{ --ev: var(--interactive-accent); }
+.fcas .fc-timegrid-event.fc-v-event,
+.fcas .fc-daygrid-block-event,
+.fcas .fc-timegrid-event-harness-inset .fc-timegrid-event{
+	background: color-mix(in srgb, var(--ev) 26%, var(--background-primary)) !important;
+	border: 0 !important; border-left: 3px solid var(--ev) !important;
+	border-radius: 5px; box-shadow: 0 0 0 1px var(--background-primary) !important;
+}
+.fcas .fc-event .fc-event-main{
+	color: color-mix(in srgb, var(--ev) 58%, #fff) !important;   /* Apple Calendar dark mode: light tint of the calendar colour */
+	padding: 3px 5px; font-size: 12px; line-height: 1.3;
+}
+.fcas .fc-event .fc-event-main-frame{ flex-direction: column-reverse; justify-content: flex-end; }
+.fcas .fc-v-event .fc-event-title-container{ flex-grow: 0; }
+.fcas .fc-event .fc-event-title{ font-weight: 600; }
+.fcas .fc-event .fc-event-time{ font-weight: 400; opacity: .75; font-size: 11px; margin: 1px 0 0; }
+.fcas .fc-event:hover{ filter: brightness(1.12); }
+.fcas .fc-event.fc-event-past{ opacity: .78; }
+.fcas .fc-event-selected, .fcas .fc-event:focus{ box-shadow: 0 0 0 2px var(--ev) !important; }
+.fcas .fc-event-selected::after, .fcas .fc-event:focus::after{ display: none; }
+/* all-day row + month view: compact pill */
+.fcas .fc-daygrid-event{ border-radius: 5px; margin-top: 2px; }
+.fcas .fc-daygrid-dot-event{ background: transparent !important; }
+.fcas .fc-daygrid-dot-event .fc-event-title{ color: var(--text-normal); font-weight: 500; }
+.fcas .fc-daygrid-block-event .fc-event-main{ padding: 1px 5px; }
+.fcas .fc-daygrid-block-event .fc-event-main-frame{ flex-direction: row; }
+
+/* ---------- now-line: red line + time pill ---------- */
+.fcas .fc-timegrid-now-indicator-line{ border-color: var(--fcas-red); border-width: 1.5px 0 0; }
+.fcas .fc-timegrid-now-indicator-line::before{
+	content: ""; position: absolute; left: -4px; top: -4.75px; width: 8px; height: 8px; border-radius: 50%; background: var(--fcas-red);
+}
+.fcas .fc-timegrid-now-indicator-arrow{ border: 0 !important; width: 100%; left: 0 !important; margin-top: -9px !important; }
+.fcas .fc-timegrid-now-indicator-arrow::after{
+	content: attr(data-now); position: absolute; right: 4px; top: 0;
+	background: var(--fcas-red); color: #fff; font-size: 11px; font-weight: 600;
+	padding: 1px 6px; border-radius: 9px; line-height: 16px;
+}
+
+/* short (< ~30 min) events: one line, title only, like Apple */
+.fcas .fc-timegrid-event-short .fc-event-main{ padding: 0 4px; font-size: 11px; line-height: 1.25; }
+.fcas .fc-timegrid-event-short .fc-event-main-frame{ flex-direction: row; justify-content: flex-start; align-items: center; overflow: hidden; }
+.fcas .fc-timegrid-event-short .fc-event-title-container{ min-width: 0; flex: 1 1 auto; }
+.fcas .fc-timegrid-event-short .fc-event-time{ display: none; }
+.fcas .fc-timegrid-event-short .fc-event-title{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
+.fcas .fc-timegrid-event-short{ min-height: 16px; }
+.fcas .fc-daygrid-dot-event .fc-event-time{ color: var(--text-muted); font-weight: 400; }
+
+/* ---------- Calendar layout ---------- */
+.theme-light .fcas .fc-event .fc-event-main{ color: color-mix(in srgb, var(--ev) 72%, #000) !important; }
+/* toolbar: big title on the left, controls on the right */
+.fcas .fc-header-toolbar .fc-toolbar-chunk:nth-child(2){ order: -1; margin-right: auto; }
+.fcas .fc-header-toolbar .fc-toolbar-chunk{ display: flex; align-items: center; gap: 6px; }
+.fcas .fc-header-toolbar .fc-toolbar-chunk:first-child{ margin-right: 6px; }
+.fcas .fc-workspace-button, .fcas .fc-analysis-button, .fcas .fc-views-button, .fcas .fc-search-button{
+	background: transparent !important; color: var(--text-faint) !important; font-weight: 400 !important;
+}
+.fcas .fc-workspace-button:hover, .fcas .fc-analysis-button:hover, .fcas .fc-views-button:hover, .fcas .fc-search-button:hover{ color: var(--text-normal) !important; }
+.fcas .fcas-seg{ display: inline-flex; gap: 2px; padding: 2px; border-radius: 8px; background: color-mix(in srgb, var(--text-normal) 6%, transparent); margin-right: 4px; }
+.fcas .fcas-seg button{
+	all: unset; cursor: pointer; font-size: 13px; font-weight: 500; padding: 3px 12px; border-radius: 6px; color: var(--text-muted);
+}
+.fcas .fcas-seg button:hover{ color: var(--text-normal); }
+.fcas .fcas-seg button.is-active{ background: color-mix(in srgb, var(--text-normal) 14%, transparent); color: var(--text-normal); }
+/* weekend headers muted, Islamic month in the corner (when enabled) */
+.fcas .fc-col-header-cell.fc-day-sat:not(.fc-day-today) .fcas-top, .fcas .fc-col-header-cell.fc-day-sun:not(.fc-day-today) .fcas-top{ opacity: .55; }
+.fcas .fc-scrollgrid-section-header .fc-timegrid-axis{ vertical-align: bottom; }
+.fcas .fcas-hmonth{ display: block; font-size: 10px; line-height: 1.15; color: var(--text-faint); padding: 0 4px 6px 2px; text-align: right; white-space: normal; }
+.fcas .fcas-hijri.is-first{ color: var(--text-muted); }
+/* events: title, location, time — lighter lines */
+.fcas .fc-event .fc-event-title{ font-weight: 600; }
+.fcas .fcas-loc{ display: flex; align-items: center; gap: 3px; font-size: 11px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.fcas .fcas-loc > span:last-child{ overflow: hidden; text-overflow: ellipsis; }
+.fcas .fcas-loc-ic, .fcas .fcas-loc-ic svg{ width: 10px; height: 10px; flex: none; }
+.fcas .fc-timegrid-event.fc-v-event{ border-left-width: 3px !important; }
+.fcas .fc-timegrid-event-harness{ margin-right: 1px; }
+/* selected (single click): solid calendar colour, like Apple Calendar */
+.fcas .fc-event.fcas-sel{ background: var(--ev) !important; }
+.fcas .fc-event.fcas-sel .fc-event-main{ color: #fff !important; }
+.fcas .fc-event.fcas-sel .fc-event-main *{ color: #fff !important; }
+
+/* ---------- Info card (double click) ---------- */
+.fcas-pop{
+	position: fixed; z-index: var(--layer-popover, 40); max-height: calc(100vh - 20px); overflow: auto;
+	background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 12px;
+	box-shadow: 0 12px 40px rgba(0,0,0,.45); font-size: 13px; color: var(--text-normal); padding: 0 0 10px;
+}
+.fcas-pop-head{ margin: 12px 12px 8px; padding: 6px 10px; border-left: 4px solid var(--ev); border-radius: 6px; background: color-mix(in srgb, var(--ev) 18%, transparent); }
+.fcas-pop-title{ font-size: 16px; font-weight: 700; line-height: 1.3; }
+.fcas-pop-sec, .fcas-pop-row, .fcas-pop-desc{ margin: 0 12px; padding: 8px 0; border-top: 1px solid var(--background-modifier-border); }
+.fcas-pop-sec{ border-top: 0; padding-top: 2px; }
+.fcas-pop-when{ font-weight: 500; }
+.fcas-pop-muted{ color: var(--text-muted); margin-top: 2px; }
+.fcas-pop-row{ display: flex; align-items: center; gap: 8px; }
+.fcas-pop-row a, .fcas-pop-desc a{ color: var(--text-accent); text-decoration: none; word-break: break-all; }
+.fcas-pop-ic, .fcas-pop-ic svg{ width: 14px; height: 14px; color: var(--text-muted); flex: none; }
+.fcas-pop-dot{ width: 10px; height: 10px; border-radius: 50%; background: var(--ev); flex: none; margin: 0 2px; }
+.fcas-pop-desc{ white-space: pre-wrap; color: var(--text-muted); font-size: 12px; max-height: 180px; overflow: auto; }
+.fcas-pop-foot{ display: flex; justify-content: flex-end; margin: 8px 12px 0; }
+.fcas-pop-foot button{ font-size: 12px; padding: 4px 14px; border-radius: 7px; }
+
+/* ---------- Year view ---------- */
+.fcas.fcas-year-on .fc-view-harness{ display: none !important; }
+.fcas .fcas-year{ flex: 1 1 auto; overflow: auto; padding: 0 10px 16px; min-height: 0; }
+.fcas .fcas-year-legend{ display: flex; gap: 14px; justify-content: flex-start; font-size: 11px; color: var(--text-muted); margin: 0 0 10px; padding-top: 2px; }
+.fcas .fcas-year-legend span::before{ content: ""; display: inline-block; width: 12px; height: 2px; background: var(--fcas-red); vertical-align: middle; margin-left: 5px; }
+.fcas .fcas-year-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px 28px; }
+.fcas .fcas-ym-name{ color: var(--fcas-red); font-size: 17px; font-weight: 500; margin: 0 0 6px 4px; }
+.fcas .fcas-ym-grid{ display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+.fcas .fcas-ym-dow{ font-size: 10px; color: var(--text-muted); text-align: center; padding-bottom: 6px; }
+.fcas .fcas-yday{ font-size: 11.5px; text-align: center; line-height: 24px; height: 24px; border-radius: 3px; cursor: pointer; color: var(--text-normal); font-variant-numeric: tabular-nums; }
+.fcas .fcas-yday.is-other{ color: var(--text-faint); opacity: .5; cursor: default; }
+.fcas .fcas-yday:not(.is-other):hover{ outline: 1px solid var(--text-faint); }
+.fcas .fcas-yday.lv1{ background: rgba(255, 204, 0, .14); }
+.fcas .fcas-yday.lv2{ background: rgba(255, 149, 0, .22); }
+.fcas .fcas-yday.lv3{ background: rgba(255, 69, 58, .28); }
+.fcas .fcas-yday.lv4{ background: rgba(255, 45, 85, .42); }
+.fcas .fcas-yday.is-hfirst{ text-decoration: underline; text-decoration-color: var(--fcas-red); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.fcas .fcas-yday.is-today{ background: var(--fcas-red) !important; color: #fff; border-radius: 50%; font-weight: 600; }
+
+/* Full Calendar's blue halo on the current/next event, toned down: a thin ring in the event's own colour */
+.fcas .ofc-event-current-or-next-harness{ filter: none !important; }
+.fcas .fc .fc-event.ofc-event-current-or-next{
+	box-shadow: 0 0 0 1px var(--background-primary), 0 0 0 2.5px color-mix(in srgb, var(--ev) 75%, #fff), 0 0 10px color-mix(in srgb, var(--ev) 35%, transparent) !important;
+	outline: none !important;
+}
+
+/* ---------- Month view ---------- */
+.fcas .fc-daygrid-day-top{ display: flex; flex-direction: row !important; justify-content: space-between; align-items: baseline; }
+.fcas .fcas-mhijri{ font-size: 11px; color: var(--text-faint); padding: 4px 6px; }
+.fcas .fcas-mhijri.is-first{ color: var(--fcas-red); text-decoration: underline; text-underline-offset: 3px; }
+.fcas .fc-daygrid-dot-event{ display: flex; align-items: center; padding: 0 2px; margin-top: 1px; font-size: 11.5px; }
+.fcas .fc-daygrid-dot-event .fc-event-title{ order: 1; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fcas .fc-daygrid-dot-event .fc-event-time{ order: 2; margin: 0 0 0 4px; font-size: 10.5px; color: var(--text-faint) !important; flex: none; }
+.fcas .fc-daygrid-event-dot{ border-width: 0 0 0 3px !important; border-radius: 1px; height: 12px; width: 0; margin: 0 5px 0 1px; flex: none; }
+.fcas .fc-daygrid-more-link{ font-size: 11px; color: var(--text-muted); padding-left: 8px; }
+.fcas .fc-daygrid-block-event .fc-event-time{ order: 2; margin-left: auto; font-size: 10.5px; opacity: .8; }
+.fcas .fc-daygrid-block-event .fc-event-title-container{ order: 1; min-width: 0; }
+
+/* ---------- Spacing: use the dead space, roomier all-day row, 00:00 labels ---------- */
+/* Obsidian's view header above the calendar is hidden (the toolbar has its own back / forward buttons); the tab's right-click menu still has those actions */
+.fcas-leaf > .view-header{ display: none; }
+.fcas-leaf > .view-content{ padding-top: 6px; }
+.fcas .fc-header-toolbar.fc-toolbar{ margin: 2px 6px 10px; }
+/* all-day row: more air between events */
+.fcas .fc-timegrid .fc-daygrid-body .fc-daygrid-day-events{ padding: 3px 0 5px; }
+.fcas .fc-timegrid .fc-daygrid-body .fc-daygrid-event-harness{ margin-bottom: 4px; }
+.fcas .fc-timegrid .fc-daygrid-block-event .fc-event-main{ padding: 2px 7px; }
+.fcas .fc-timegrid .fc-daygrid-block-event{ margin: 0 3px; }
+.fcas .fc-timegrid-axis-cushion{ padding-top: 6px; }
+/* hour labels: first one sits inside the grid (not clipped), closing 00:00 at the bottom like Apple Calendar */
+.fcas .fc-timegrid-slots tr:first-child .fc-timegrid-slot-label-cushion{ top: 0; }
+.fcas .fc-timegrid-slots tr:last-child .fc-timegrid-slot-label{ position: relative; }
+.fcas .fc-timegrid-slots tr:last-child .fc-timegrid-slot-label::after{
+	content: "00:00"; position: absolute; right: 6px; bottom: 0; font-size: 11px; font-weight: 500; color: var(--text-faint);
+}
+/* hover peek: read-only, follows the pointer out */
+.fcas-pop.is-peek{ pointer-events: none; animation: fcas-peek .12s ease-out; }
+.fcas-pop.is-peek .fcas-pop-foot button{ display: none; }
+.fcas-pop-hint{ font-size: 11px; color: var(--text-faint); margin-right: auto; }
+@keyframes fcas-peek { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+/* Sync button (left of Day/Week/Month/Year) */
+.fcas .fcas-sync{ display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 26px; padding: 0; margin-right: 6px; border-radius: 8px; background: color-mix(in srgb, var(--text-normal) 6%, transparent); box-shadow: none; color: var(--text-muted); cursor: pointer; }
+.fcas .fcas-sync:hover{ color: var(--text-normal); background: color-mix(in srgb, var(--text-normal) 12%, transparent); }
+.fcas .fcas-sync svg{ width: 15px; height: 15px; }
+.fcas .fcas-sync.is-syncing svg{ animation: fcas-spin 0.9s linear infinite; }
+@keyframes fcas-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Compact layout: dense one-line headers, Calendars panel, calendar chips ---------- */
+.fcas-leaf > .view-content{ padding: 2px 4px max(var(--safe-area-inset-bottom, 0px), 2px) 2px !important; }
+.fcas .fc-header-toolbar.fc-toolbar{ margin: 0 2px 4px 4px; min-height: 26px; gap: 6px; }
+.fcas .fc-header-toolbar .fc-toolbar-chunk{ gap: 4px; }
+/* title: calendar icon + "October" + Islamic month (when enabled) */
+.fcas .fcas-title{ font-size: 17px; line-height: 22px; display: inline-flex; align-items: center; gap: 6px; letter-spacing: -0.01em; }
+.fcas .fcas-ticon{ display: inline-flex; cursor: pointer; border-radius: 5px; padding: 1px; }
+.fcas .fcas-ticon:hover{ background: color-mix(in srgb, var(--text-normal) 10%, transparent); }
+.fcas .fcas-ticon svg{ width: 17px; height: 17px; }
+.fcas .fcas-tyear{ font-weight: 400; color: var(--text-muted); }
+.fcas .fcas-thijri{ font-size: 12px; color: var(--text-faint); font-weight: 400; letter-spacing: 0; }
+/* toolbar controls: smaller */
+.fcas .fc-button.fc-button-primary{ font-size: 12px; padding: 2px 8px; border-radius: 6px; line-height: 18px; }
+.fcas .fc-button-group{ padding: 1px; border-radius: 7px; }
+.fcas .fcas-seg{ padding: 1px; border-radius: 7px; margin-right: 2px; }
+.fcas .fcas-seg button{ font-size: 12px; padding: 2px 9px; line-height: 18px; border-radius: 6px; }
+.fcas .fcas-sync{ width: 24px; height: 22px; margin-right: 2px; border-radius: 7px; }
+.fcas .fcas-sync svg{ width: 13px; height: 13px; }
+/* calendar chips: coloured ring = shown, faded = hidden, filled = the only one shown */
+.fcas .fcas-chips{ display: inline-flex; align-items: center; gap: 1px; margin-left: 6px; flex-wrap: nowrap; }
+.fcas .fcas-chip{ all: unset; box-sizing: border-box; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; cursor: pointer; }
+.fcas .fcas-chip::before{ content: ""; width: 10px; height: 10px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--c); }
+.fcas .fcas-chip:hover{ background: color-mix(in srgb, var(--text-normal) 10%, transparent); }
+.fcas .fcas-chip.is-off::before{ opacity: .3; }
+.fcas .fcas-chip.is-solo::before{ background: var(--c); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 35%, transparent); }
+/* day header: one line "Fri 30 18" */
+.fcas .fc-col-header-cell-cushion{ flex-direction: row !important; align-items: baseline; gap: 5px; padding: 3px 2px 3px !important; font-size: 12px; }
+.fcas .fcas-top{ gap: 4px; align-items: center; }
+.fcas .fcas-num{ min-width: 20px; height: 20px; border-radius: 10px; font-size: 13px; padding: 0 3px; }
+.fcas .fcas-hijri{ font-size: 10px; margin: 0; }
+/* time column: narrow, no corner text */
+.fcas .fc-timegrid-slot-label-cushion{ font-size: 10px; padding: 0 3px 0 2px; }
+.fcas .fc-timegrid-axis-cushion{ font-size: 9px; padding: 2px 2px 0 0 !important; white-space: nowrap; letter-spacing: -0.02em; max-width: none; }
+.fcas .fc-timegrid-slots tr:last-child .fc-timegrid-slot-label::after{ right: 3px; font-size: 10px; }
+.fcas .fc-timegrid-now-indicator-arrow::after{ font-size: 10px; line-height: 14px; padding: 0 3px; right: 1px; letter-spacing: -0.02em; }
+/* all-day: rows as tall as their events, no spare row */
+.fcas .fc-timegrid .fc-daygrid-body .fc-daygrid-day-events{ padding: 1px 0 1px; margin-bottom: 1px !important; min-height: 0; }
+.fcas .fc-timegrid .fc-daygrid-body .fc-daygrid-event-harness{ margin-bottom: 1px; }
+.fcas .fc-timegrid .fc-daygrid-block-event{ margin: 0 2px; }
+.fcas .fc-timegrid .fc-daygrid-block-event .fc-event-main{ padding: 0 5px; font-size: 11px; line-height: 16px; }
+.fcas .fc-timegrid .fc-daygrid-body .fc-daygrid-day-bottom{ margin: 0; }
+/* events: a size smaller; title first and overflow downwards (column-reverse clipped tall titles from the top) */
+.fcas .fc-event .fc-event-main{ font-size: 11px; padding: 2px 4px; }
+.fcas .fc-timegrid-event:not(.fc-timegrid-event-short) .fc-event-main-frame{ flex-direction: column; justify-content: flex-start; }
+.fcas .fc-timegrid-event .fc-event-title-container{ order: 1; }
+.fcas .fc-timegrid-event .fc-event-time{ order: 2; font-size: 10px; }
+.fcas .fc-timegrid-event .fc-event-title{ line-height: 1.4; unicode-bidi: plaintext; }
+.fcas .fc-timegrid-event-short .fc-event-main{ padding: 0 4px; }
+.fcas .fc-timegrid-col-bg{ z-index: 4; }
+.fcas .fc-timegrid-col-bg .fc-timegrid-bg-harness{ pointer-events: none; }
+/* Calendars panel (hover the left edge, or click the title's calendar icon) */
+.fcas-host{ position: relative; }
+.fcas-edge{ position: absolute; left: 0; top: 0; bottom: 0; width: 6px; z-index: 20; }
+.fcas-edge:hover{ background: linear-gradient(90deg, color-mix(in srgb, var(--interactive-accent) 45%, transparent), transparent); }
+.fcas-side{
+	position: absolute; left: 0; top: 0; bottom: 0; width: 208px; z-index: 30; overflow-y: auto; box-sizing: border-box; padding: 6px 6px 10px;
+	background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); box-shadow: 6px 0 24px rgba(0,0,0,.35);
+	transform: translateX(-102%); transition: transform .14s ease-out; font-size: 12px; scrollbar-width: thin;
+}
+.fcas-side.is-open{ transform: none; }
+.fcas-side-head{ display: flex; align-items: center; gap: 4px; padding: 0 2px 4px; }
+.fcas-side-title{ font-weight: 700; font-size: 12.5px; margin-right: auto; white-space: nowrap; }
+.fcas-side-btn{ all: unset; cursor: pointer; font-size: 11px; color: var(--text-muted); padding: 1px 5px; border-radius: 5px; white-space: nowrap; display: inline-flex; align-items: center; }
+.fcas-side-btn:hover{ color: var(--text-normal); background: color-mix(in srgb, var(--text-normal) 10%, transparent); }
+.fcas-side-pin svg{ width: 12px; height: 12px; }
+.fcas-side-pin.is-on{ color: var(--interactive-accent); }
+.fcas-side-grp{ font-size: 10.5px; font-weight: 600; color: var(--text-faint); padding: 6px 4px 2px; cursor: pointer; text-transform: uppercase; letter-spacing: .04em; }
+.fcas-side-grp:hover{ color: var(--text-muted); }
+.fcas-cal{ display: flex; align-items: center; gap: 6px; padding: 2px 4px; border-radius: 5px; cursor: pointer; line-height: 16px; }
+.fcas-cal:hover{ background: color-mix(in srgb, var(--text-normal) 7%, transparent); }
+.fcas-cb{ width: 12px; height: 12px; flex: none; border-radius: 3px; border: 1.5px solid var(--c); display: inline-flex; align-items: center; justify-content: center; color: var(--c); }
+.fcas-cb svg{ width: 10px; height: 10px; stroke-width: 3.5; }
+.fcas-cal.is-off .fcas-cb svg{ visibility: hidden; }
+.fcas-cal.is-off .fcas-cal-name{ color: var(--text-faint); }
+.fcas-cal-name{ flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }   /* wraps at spaces; a single long word (an email) ends in … */
+.fcas-only{ all: unset; cursor: pointer; font-size: 10.5px; color: var(--text-muted); padding: 0 4px; border-radius: 4px; visibility: hidden; white-space: nowrap; }
+.fcas-cal:hover .fcas-only{ visibility: visible; }
+.fcas-only:hover{ color: var(--text-normal); background: color-mix(in srgb, var(--text-normal) 12%, transparent); }
+/* title + location keep their height; the time line goes below them (it used to draw over the location line) */
+.fcas .fc-timegrid-event:not(.fc-timegrid-event-short) .fc-event-title-container{ flex-shrink: 0; }
+.fcas .fc-timegrid-event.fc-v-event{ overflow: hidden; }
+
+/* ---------- Toolbar geometry, back / forward, interactive peek ---------- */
+/* toolbar: wraps instead of overlapping at ~520 px; every control 22 px tall, centred */
+.fcas.fc .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr{ flex-wrap: wrap; row-gap: 4px; align-items: center; }
+.fcas .fc-header-toolbar .fc-toolbar-chunk{ flex: 0 0 auto; align-items: center; margin-right: 0; }
+.fcas .fc-header-toolbar .fc-toolbar-chunk:nth-child(2){ flex: 1 1 auto; min-width: 0; flex-wrap: wrap; row-gap: 2px; }
+.fcas .fc-header-toolbar .fc-toolbar-chunk:last-child{ margin-left: auto; }
+.fcas .fcas-chips{ flex-wrap: wrap; margin-left: 2px; }
+.fcas .fc-header-toolbar .fc-button{ height: 22px; min-height: 0; box-sizing: border-box; padding-top: 0; padding-bottom: 0; line-height: 20px; display: inline-flex; align-items: center; justify-content: center; }
+.fcas .fc-header-toolbar .fc-button-group, .fcas .fcas-seg{ height: 22px; box-sizing: border-box; padding: 1px; align-items: center; }
+.fcas .fc-header-toolbar .fc-button-group > .fc-button, .fcas .fcas-seg button{ height: 20px; line-height: 20px; padding-top: 0; padding-bottom: 0; }
+.fcas .fc-header-toolbar .fc-button .fc-icon{ font-size: 1.1em; }
+.fcas .ofc-toolbar-search-input-wrap{ height: 22px; align-self: center; }
+.fcas .ofc-toolbar-search-input{ height: 22px; }
+.fcas .fcas-sync{ height: 22px; }
+/* back / forward */
+.fcas .fcas-nav{ display: inline-flex; gap: 1px; margin-right: 4px; }
+.fcas .fcas-navb{ all: unset; box-sizing: border-box; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); cursor: pointer; }
+.fcas .fcas-navb:hover{ color: var(--text-normal); background: color-mix(in srgb, var(--text-normal) 10%, transparent); }
+.fcas .fcas-navb svg{ width: 15px; height: 15px; }
+.fcas .fcas-navb.is-off{ opacity: .3; }
+/* peek: interactive now (links, Edit) */
+.fcas-pop.is-peek{ pointer-events: auto; }
+.fcas-pop.is-peek .fcas-pop-foot button{ display: inline-flex; }
+
+/* time line: clock glyph, 24 h */
+.fcas .fc-timegrid-event .fc-event-time{ display: flex; align-items: center; gap: 3px; }
+.fcas .fc-timegrid-event .fc-event-time::before{ content: ""; width: 9px; height: 9px; flex: none; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v6l4 2'/%3E%3C/svg%3E") center / contain no-repeat; }
+/* repeating long items (a night's sleep, a shift): quieter striped fill, one line, continuation segments blank */
+.fcas .fc-timegrid-event.fcas-routine{ background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ev) 17%, var(--background-primary)) 0 5px, color-mix(in srgb, var(--ev) 9%, var(--background-primary)) 5px 10px) !important; border-left-color: color-mix(in srgb, var(--ev) 70%, transparent) !important; }
+.fcas .fcas-routine .fc-event-time, .fcas .fcas-routine .fcas-loc{ display: none; }
+.fcas .fc-timegrid-event.fcas-routine:not(.fc-event-start) .fc-event-main-frame{ visibility: hidden; }
+.fcas .fc-timegrid-event:not(.fc-event-start){ border-top-left-radius: 0; border-top-right-radius: 0; }
+.fcas .fc-timegrid-event:not(.fc-event-end){ border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+/* ---------- Overlap layout (docs/LAYOUT-RULES.md) ---------- */
+/* R3: the top box's fill moves to a layer that can thin out where it covers another box; its text stays solid */
+.fcas .fc-timegrid-event.fcas-ov{ background: none !important; }
+.fcas .fc-timegrid-event.fcas-ov::before{ content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit; background: var(--fcas-fill); -webkit-mask: var(--fcas-bgmask) 0 0 / 100% 100% no-repeat; mask: var(--fcas-bgmask) 0 0 / 100% 100% no-repeat; }
+.fcas .fc-timegrid-event.fcas-ov > .fc-event-main{ position: relative; z-index: 1; }
+.fcas .fc-timegrid-event{ -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+/* R10: heading + smaller detail; text steps down until it fits */
+.fcas .fc-timegrid-event.fcas-fit1 .fc-event-title{ font-size: 11px; line-height: 1.2; }
+.fcas .fc-timegrid-event.fcas-fit2 .fc-event-title{ font-size: 10px; line-height: 1.15; }
+.fcas .fc-timegrid-event.fcas-fit1 .fc-event-main, .fcas .fc-timegrid-event.fcas-fit2 .fc-event-main{ padding-top: 1px; padding-bottom: 1px; }
+.fcas .fc-timegrid-event.fcas-fit2 .fcas-loc, .fcas .fc-timegrid-event.fcas-fit2 .fc-event-time{ font-size: 9px; }
+/* R11: one-line events: pill and time on one centre line, a small gap, no FC dash */
+.fcas .fc-timegrid-event-short .fc-event-main-frame{ align-items: center; gap: 5px; }
+.fcas .fc-timegrid-event-short .fc-event-title-container{ display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
+.fcas .fc-timegrid-event-short .fc-event-time{ flex: none; margin: 0; line-height: 16px; height: 16px; white-space: nowrap; }
+.fcas .fc-timegrid-event-short .fc-event-time::after{ content: none; }
+.fcas .fc-timegrid-event-short .fc-event-time{ font-size: 10px; }
+/* R4b: the top box's text drops below the text behind */
+.fcas .fc-timegrid-event.fcas-drop .fc-event-main{ padding-top: calc(3px + var(--fcas-drop, 0px)); }
+
+/* ---------- Mini calendar: Full Calendar's sidebar view as a month grid with dots + a day list ---------- */
+.fcas-mini-view .view-content{ display: flex; flex-direction: column; padding: 0; }
+.fcas-mini-view .view-content > *{ min-height: 0; }
+.fcas-mm{ flex: none; padding: 10px 10px 6px; border-bottom: 1px solid color-mix(in srgb, var(--text-normal) 12%, transparent); font-feature-settings: "tnum"; user-select: none; }
+.fcas-mm-head{ display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 0 2px 8px; }
+.fcas-mm-title{ font-size: 15px; white-space: nowrap; color: var(--text-normal); }
+.fcas-mm-title b{ font-weight: 700; }
+.fcas-mm-year{ color: #ff3b30; font-weight: 500; }
+.fcas-mm-nav{ display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
+.fcas-mm-nav button{ all: unset; cursor: pointer; height: 22px; min-width: 22px; padding: 0 6px; border-radius: 6px; text-align: center; font-size: 15px; line-height: 22px; color: var(--text-muted); box-sizing: border-box; }
+.fcas-mm-nav button.fcas-mm-today{ font-size: 12px; font-weight: 600; color: var(--text-normal); }
+.fcas-mm-nav button:hover{ background: var(--background-modifier-hover); color: var(--text-normal); }
+.fcas-mm-grid{ display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 1px; }
+.fcas-mm-dow{ text-align: center; font-size: 10px; font-weight: 600; color: var(--text-faint); padding-bottom: 4px; }
+.fcas-mm-day{ all: unset; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 2px 0 3px; border-radius: 8px; box-sizing: border-box; }
+.fcas-mm-day{ background: transparent !important; box-shadow: none !important; }
+.fcas-mm-day:hover{ background: var(--background-modifier-hover); }
+.fcas-mm-num{ width: 24px; height: 24px; line-height: 24px; text-align: center; border-radius: 50%; font-size: 12.5px; font-weight: 500; color: var(--text-normal); }
+.fcas-mm-day.is-wkend .fcas-mm-num{ color: var(--text-muted); }
+.fcas-mm-day.is-out .fcas-mm-num{ color: var(--text-faint); opacity: .6; }
+.fcas-mm-day.is-sel .fcas-mm-num{ background: color-mix(in srgb, var(--text-normal) 16%, transparent); font-weight: 700; }
+.fcas-mm-day.is-today .fcas-mm-num{ background: #ff3b30; color: #fff; font-weight: 700; opacity: 1; }
+.fcas-mm-dots{ display: flex; gap: 2px; height: 4px; }
+.fcas-mm-dots i{ width: 4px; height: 4px; border-radius: 50%; }
+.fcas-mm-day.is-out .fcas-mm-dots{ opacity: .45; }
+
+/* FC's own sidebar calendar stays in the DOM (it holds the events) but is not shown; .fcas-ml below the grid is the list */
+.fcas.fcas-mini{ position: absolute; width: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; }
+.fcas-ml{ flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-bottom: 12px; }
+.fcas-ml-day{ display: flex; align-items: baseline; gap: 6px; padding: 12px 12px 4px; position: sticky; top: 0; background: var(--background-secondary); z-index: 1; }
+.fcas-ml-name{ font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-normal); white-space: nowrap; }
+.fcas-ml-date{ font-size: 11px; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+.fcas-ml-day.is-today .fcas-ml-name{ color: #ff3b30; }
+.fcas-ml-ev{ display: grid; grid-template-columns: 4px 1fr; grid-template-areas: "bar title" "bar time"; column-gap: 8px; margin: 2px 8px; padding: 4px 8px 4px 6px; border-radius: 6px; }
+.fcas-ml-ev:hover{ background: var(--background-modifier-hover); }
+.fcas-ml-ev i{ grid-area: bar; border-radius: 2px; min-height: 16px; }
+.fcas-ml-t{ grid-area: title; font-size: 12.5px; font-weight: 500; color: var(--text-normal); line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fcas-ml-tm{ grid-area: time; font-size: 11px; color: var(--text-muted); line-height: 1.3; white-space: nowrap; }
+.fcas-ml-ev.is-past{ opacity: .5; }
+.fcas-ml-none{ margin: 2px 12px; font-size: 12px; color: var(--text-muted); }
+
+/* Full Calendar 0.13+ adds an agenda list under the month grid; the year view replaces the whole grid, so hide it there */
+.ofc-calendar-shell:has(> .fcas-year-on) .ofc-mobile-agenda{ display: none !important; }
