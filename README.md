@@ -12,15 +12,17 @@ It is display only: it reads your events to draw them and never writes to your c
 
 ## What it does
 
-- Tinted event blocks in each calendar's colour, with a location line, a glow on the event that is happening now, and a red time pill on the now-line.
+Out of the box it follows Apple Calendar: nothing else is switched on.
+
+- Tinted event blocks in each calendar's colour with a left bar, a location line and a red time pill on the now-line.
 - A clean toolbar: back / forward, a month title, Day / Week / Month / Year switch and a sync button.
-- **Year view**: twelve months, each day shaded by how busy it is. Click a day to jump to that week.
+- Overlapping events sit side by side, as in Apple Calendar.
+- **Year view**: twelve months; click a day to jump to that week.
 - **Calendars panel** (hover the left edge, or click the calendar icon in the title): one switch per calendar, and "Only" to show a single calendar. Calendars are grouped by type (Google, CalDAV, Outlook, ICS, other).
-- **Calendar chips** in the toolbar: click one to show only that calendar, click again to show all, Shift-click to hide or show it.
 - Single click selects an event, double click opens an info card (Edit opens Full Calendar's own editor), hover shows a quick peek.
-- Overlapping events share a day column by a fixed set of rules ([docs/LAYOUT-RULES.md](docs/LAYOUT-RULES.md)). Repeating timed events of four hours or more (a sleep, a shift) are drawn as a quieter striped back layer.
 - A restyled mini calendar in Full Calendar's sidebar.
-- Optional Islamic (civil) dates next to each date, off by default.
+
+Optional extras, all off by default (see Settings): a rolling seven-day week, Islamic dates, calendar chips in the toolbar, busy-day shading in the year view, a layered overlap layout and a striped look for long repeating events.
 
 ## Requirements
 
@@ -38,8 +40,12 @@ It is display only: it reads your events to draw them and never writes to your c
 | Setting | Default | What it does |
 |---|---|---|
 | First day of the week | Follow Full Calendar | Monday, Sunday, Saturday, or whatever Full Calendar uses. Applies to the week, month and year views and the mini calendar. |
-| Week view starts on today | Off | Shows today and the six days after it instead of a calendar week. |
-| Show Islamic calendar dates | Off | Adds the Islamic (civil) day to each date, the month in the title and the year view. |
+| Week view starts on today | Off | Shows today and the six days after it instead of a calendar week (Apple Calendar's "Start week on: Today"). |
+| Show Islamic calendar dates | Off | Adds the Islamic (civil) day to each date, the month in the title and the year view (Apple Calendar's alternate calendar). |
+| Calendar chips in the toolbar | Off | Coloured rings in the toolbar: click one to show only that calendar, Shift-click to hide or show it. |
+| Busy-day shading in the year view | Off | Tints each day of the year view by how many events it has. |
+| Layered overlap layout | Off | Overlapping events stack in layers with a visible side strip instead of sitting side by side ([rules](docs/LAYOUT-RULES.md)). |
+| Striped look for long repeating events | Off | Repeating timed events at least as long as the threshold (default 240 minutes) are drawn striped, behind other events. |
 
 ## How it works
 

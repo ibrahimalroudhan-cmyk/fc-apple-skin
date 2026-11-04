@@ -14,7 +14,7 @@
 // Re-checked every 2 s because Full Calendar rebuilds its calendar object on view/settings changes.
 const { Plugin, PluginSettingTab, Setting, setIcon, Menu } = require('obsidian');
 const FC_ID = 'full-calendar-remastered';   // the Full Calendar plugin this skin dresses
-const DEFAULTS = { hidden: [], soloPrev: null, hijri: false, weekFromToday: false, firstDay: -1 };   // firstDay -1 = follow Full Calendar
+const DEFAULTS = { hidden: [], soloPrev: null, hijri: false, weekFromToday: false, firstDay: -1, routine: false, routineMin: 240, layered: false, chips: false, yearHeat: false };   // firstDay -1 = follow Full Calendar
 let hijriOn = false;   // Islamic-calendar secondary dates (setting)
 // ---------- Layout: how events share a day (rules in docs/LAYOUT-RULES.md) ----------
 // Tunables: one edit each. px = screen pixels in the time grid.
@@ -24,7 +24,7 @@ const SAME_START_PX = 10;         // R2  two ordinary events starting this close
 const TINY_OVERLAP_PX = 9;        // R5  an edge overlap up to this many px counts as tiny…
 const TINY_OVERLAP_RATIO = 0.2;   // R5  …or up to this share of the smaller box
 const MIN_BOX_PX = 15;            // R5  a box is never trimmed below this: it moves away instead
-const BACKDROP_MIN = 240;         // R1  repeating items of at least this many minutes are always the back layer (a night's sleep, a long shift)
+let routineOn = false, BACKDROP_MIN = 240;   // optional striped look: repeating items of at least BACKDROP_MIN minutes form the back layer (a night's sleep, a long shift)
 const BOX_ALPHA = 0.8;            // R3  fill of the top box where it only covers another box
 const DROP_GAP_PX = 2;            // R4b gap kept under the text behind when the top box's text drops clear
 const TEXT_ALPHA = 0.3;           // R4  top box (fill + text) where it covers text behind
@@ -69,6 +69,7 @@ const placeOf = loc => { const s = String(loc || '').trim(); if (!s) return null
 
 const pad = n => String(n).padStart(2, '0');
 const HIJRI = 'ar-SA-u-ca-islamic-civil-nu-latn';   // civil variant of the Islamic calendar
+const syncRoutine = st => { routineOn = !!st.routine; BACKDROP_MIN = Math.max(30, Number(st.routineMin) || 240); };
 const hijriParts = d => {
 	if (!hijriOn) return null;
 	try {
@@ -101,7 +102,7 @@ module.exports = class FcAppleSkin extends Plugin {
 		this.hidden = new Set();     // calendar ids switched off (Calendars panel / chips), kept in this plugin's data.json
 		this.soloPrev = null;        // hidden set before a solo, restored by clicking the solo chip again
 		this.loadCalNames();
-		this.loadData().then(d => { this.settings = Object.assign({}, DEFAULTS, d || {}); hijriOn = !!this.settings.hijri; this.hidden = new Set(this.settings.hidden || []); this.soloPrev = Array.isArray(this.settings.soloPrev) ? new Set(this.settings.soloPrev) : null; this.reparseAll(); });
+		this.loadData().then(d => { this.settings = Object.assign({}, DEFAULTS, d || {}); hijriOn = !!this.settings.hijri; syncRoutine(this.settings); this.hidden = new Set(this.settings.hidden || []); this.soloPrev = Array.isArray(this.settings.soloPrev) ? new Set(this.settings.soloPrev) : null; this.reparseAll(); });
 		this.addSettingTab(new SkinSettings(this.app, this));
 		this.dayHeader = arg => {
 			const d = arg.date, type = arg.view.type;
@@ -169,7 +170,7 @@ module.exports = class FcAppleSkin extends Plugin {
 		if (!raw) return raw;
 		// repeating timed items of BACKDROP_MIN+ minutes (a night's sleep, a shift) get the quieter striped "routine" look and form the back layer
 		const rec = !!(raw.rrule || raw.daysOfWeek || raw.startRecur), m = rawMinutes(raw);
-		if (!raw.allDay && rec && m != null && m >= BACKDROP_MIN) return Object.assign({}, raw, { classNames: [].concat(raw.classNames || [], 'fcas-routine') });
+		if (routineOn && !raw.allDay && rec && m != null && m >= BACKDROP_MIN) return Object.assign({}, raw, { classNames: [].concat(raw.classNames || [], 'fcas-routine') });
 		return raw;
 	}
 	hookFc(fc) {
@@ -240,7 +241,9 @@ module.exports = class FcAppleSkin extends Plugin {
 		const vt = (fc.view && fc.view.type) || fc.getOption('initialView');
 		this.hookFc(fc);
 		if (fc.getOption('dayHeaderContent') !== this.dayHeader) fc.setOption('dayHeaderContent', this.dayHeader);
+		if (fc.getOption('defaultRangeSeparator') !== '–') fc.setOption('defaultRangeSeparator', '–');   // 09:30–10:00 as in Apple Calendar
 		if (fc.getOption('titleFormat') !== this.titleFormat) fc.setOption('titleFormat', this.titleFormat);
+		const ov = !!this.settings.layered; if (fc.getOption('slotEventOverlap') !== ov) fc.setOption('slotEventOverlap', ov);   // off: overlapping events sit side by side, as in Apple Calendar
 		if (!this.prefsDone.has(fc)) {
 			this.prefsDone.add(fc); for (const [k, val] of Object.entries(this.prefs)) fc.setOption(k, val);
 			// optional: a freshly built week view opens with today in the first column (rolling 7 days)
@@ -592,13 +595,13 @@ module.exports = class FcAppleSkin extends Plugin {
 		// Month view: Islamic day at the top-left of each cell (when on), "1 Oct" on the 1st (Apple Calendar)
 		box.querySelectorAll('.fc-daygrid-day[data-date] .fc-daygrid-day-top').forEach(top => {
 			const cell = top.closest('.fc-daygrid-day'), k = cell.dataset.date;
+			const num = top.querySelector('.fc-daygrid-day-number');   // "1 Nov" on the 1st: a data attribute shown by CSS, Full Calendar's own text is left alone
+			if (num && k.endsWith('-01') && !num.dataset.fcasMon) { const [y0, m0] = k.split('-').map(Number); num.dataset.fcasMon = new Date(y0, m0 - 1, 1).toLocaleDateString(undefined, { month: 'short' }); }
 			if (top.dataset.fcasH === k) return;
 			top.dataset.fcasH = k;
 			top.querySelectorAll('.fcas-mhijri').forEach(x => x.remove());
 			const [y, m, d] = k.split('-').map(Number), dt = new Date(y, m - 1, d), h = hijriParts(dt);
 			if (h) top.prepend(createSpan({ cls: 'fcas-mhijri' + (h.day === '1' ? ' is-first' : ''), text: h.day === '1' ? h.month : h.day, attr: { dir: 'rtl' } }));
-			const num = top.querySelector('.fc-daygrid-day-number');
-			if (num && d === 1 && !num.dataset.fcasMon) { num.dataset.fcasMon = '1'; num.textContent = '1 ' + dt.toLocaleDateString(undefined, { month: 'short' }); }
 		});
 		const now = new Date(), nowTxt = hm(now);
 		box.querySelectorAll('.fc-timegrid-now-indicator-arrow').forEach(a => { if (a.dataset.now !== nowTxt) a.dataset.now = nowTxt; });
@@ -624,7 +627,7 @@ module.exports = class FcAppleSkin extends Plugin {
 		}
 		const ha = hijriParts(a), hb = hijriParts(b);
 		const hijri = ha ? (hb && hb.month !== ha.month ? ha.month + ' – ' + hb.month : ha.month) : '';
-		return { main, sub: d.getFullYear() !== now.getFullYear() ? String(d.getFullYear()) : '', hijri };
+		return { main, sub: String(d.getFullYear()), hijri };
 	}
 
 	// does a hidden calendar have (non-repeating) events in [a, b)? Raw data only; repeating ones are remembered from before.
@@ -636,6 +639,7 @@ module.exports = class FcAppleSkin extends Plugin {
 
 	// Toolbar chips: one coloured ring per calendar with events in view. Click = only that calendar (again = back); Shift-click = hide/show.
 	paintChips(box, after) {
+		if (!this.settings.chips) { const old = box.querySelector('.fcas-chips'); if (old) old.remove(); return; }
 		const fc = box.fcasFc;
 		let row = box.querySelector('.fcas-chips');
 		if (!fc || !fc.view || this.year !== null) { if (row) row.remove(); return; }
@@ -663,7 +667,13 @@ module.exports = class FcAppleSkin extends Plugin {
 
 
 	// ---------- Layout: one collision pass per day column (docs/LAYOUT-RULES.md). Inline geometry only; FC's values are put back first. ----------
+	resetLayout(box) {
+		box.querySelectorAll('.fc-timegrid-event-harness').forEach(h => { const st = h.fcasSet; if (st) for (const k of Object.keys(st.o)) h.style[k] = st.o[k]; h.fcasSet = null; });
+		box.querySelectorAll('.fc-timegrid-col').forEach(c => { c.fcasKey = null; });
+		box.querySelectorAll('.fcas-ov, .fcas-fit1, .fcas-fit2, .fcas-drop').forEach(e => { e.classList.remove('fcas-ov', 'fcas-fit1', 'fcas-fit2', 'fcas-drop'); e.style.removeProperty('mask-image'); e.style.removeProperty('-webkit-mask-image'); });
+	}
 	paintLayout(box) {
+		if (!this.settings.layered) { if (box.querySelector('.fcas-ov, .fcas-fit1, .fcas-fit2, .fcas-drop, .fc-timegrid-col[data-date]')) this.resetLayout(box); return; }
 		if (this.year !== null) return;
 		for (const col of box.querySelectorAll('.fc-timegrid-col[data-date]')) { try { this.layoutCol(col); } catch (e) { console.warn('[fc-apple-skin] layout', e); } }
 	}
@@ -682,7 +692,7 @@ module.exports = class FcAppleSkin extends Plugin {
 		}
 		const o = col.getBoundingClientRect(), evs = hs.map(e => {
 			const r = e.el.getBoundingClientRect(), g = e.el.fcSeg, mins_ = g ? (g.end - g.start) / 60000 : 0;
-			return Object.assign(e, { top: r.top - o.top, bot: r.bottom - o.top, x: 0, w: colW, depth: 0, grp: null, moved: false, back: e.el.classList.contains('fcas-routine') && mins_ >= BACKDROP_MIN, short: e.el.classList.contains('fc-timegrid-event-short') });
+			return Object.assign(e, { top: r.top - o.top, bot: r.bottom - o.top, x: 0, w: colW, depth: 0, grp: null, moved: false, back: routineOn && e.el.classList.contains('fcas-routine') && mins_ >= BACKDROP_MIN, short: e.el.classList.contains('fc-timegrid-event-short') });
 		}).sort((a, b) => (b.back - a.back) || (a.top - b.top) || ((b.bot - b.top) - (a.bot - a.top)));
 		// R2: ordinary events starting together share the width
 		evs.forEach((e, i) => { if (e.back) return; for (let j = 0; j < i; j++) { const p = evs[j]; if (!p.back && overlapY(p, e) > Math.max(TINY_OVERLAP_PX, TINY_OVERLAP_RATIO * Math.min(p.bot - p.top, e.bot - e.top)) && Math.abs(p.top - e.top) <= SAME_START_PX) { e.grp = p.grp || p; e.grp.grp = e.grp; break; } } });
@@ -840,7 +850,7 @@ module.exports = class FcAppleSkin extends Plugin {
 				const cell = g.createDiv({ cls: 'fcas-yday', text: String(d.getDate()) });
 				if (!inMonth) { cell.addClass('is-other'); continue; }
 				cell.dataset.date = k;
-				const lv = level(count[k]);
+				const lv = this.settings.yearHeat ? level(count[k]) : 0;
 				if (lv) cell.addClass('lv' + lv);
 				if (k === today) cell.addClass('is-today');
 				const h = hijriParts(d), hf = !!(h && h.day === '1');
@@ -972,6 +982,7 @@ module.exports = class FcAppleSkin extends Plugin {
 				box.classList.remove('fcas', 'fcas-year-on');
 				box.querySelectorAll('.fcas-title, .fcas-seg, .fcas-year, .fcas-hmonth, .fcas-loc, .fcas-mhijri, .fcas-chips, .fcas-nav, .fcas-sync').forEach(e => e.remove());
 				box.querySelectorAll('[data-fcas-loc]').forEach(e => delete e.dataset.fcasLoc);
+				box.querySelectorAll('[data-fcas-mon]').forEach(e => delete e.dataset.fcasMon); box.querySelectorAll('[data-fcas-h]').forEach(e => delete e.dataset.fcasH);
 				box.querySelectorAll('.fc-timegrid-event-harness').forEach(h => { const st = h.fcasSet; if (st) for (const k of Object.keys(st.o)) h.style[k] = st.o[k]; h.fcasSet = null; });
 				box.querySelectorAll('.fc-timegrid-col').forEach(c => { c.fcasKey = null; });
 				box.querySelectorAll('.fcas-ov, .fcas-fit1, .fcas-fit2, .fcas-drop').forEach(e => { e.classList.remove('fcas-ov', 'fcas-fit1', 'fcas-fit2', 'fcas-drop'); e.style.removeProperty('mask-image'); e.style.removeProperty('-webkit-mask-image'); });
@@ -979,7 +990,7 @@ module.exports = class FcAppleSkin extends Plugin {
 			const fc = v.fullCalendarView;
 			this.unhookFc(fc);   // every calendar visible again
 			v.containerEl.closest('.workspace-leaf-content')?.classList.remove('fcas-leaf');
-			try { fc?.setOption('dayHeaderContent', undefined); fc?.setOption('titleFormat', undefined); fc?.setOption('firstDay', this.fd()); fc?.setOption('dayMaxEvents', false); } catch (e) {}
+			try { fc?.setOption('dayHeaderContent', undefined); fc?.setOption('titleFormat', undefined); fc?.setOption('firstDay', this.fd()); fc?.setOption('dayMaxEvents', false); fc?.setOption('slotEventOverlap', true); fc?.setOption('defaultRangeSeparator', ' - '); } catch (e) {}
 		}
 		document.querySelectorAll('.fcas-leaf').forEach(e => e.classList.remove('fcas-leaf'));
 	}
@@ -990,13 +1001,23 @@ class SkinSettings extends PluginSettingTab {
 	display() {
 		const { containerEl } = this, p = this.plugin;
 		containerEl.empty();
-		const save = async () => { await p.saveData(p.settings); hijriOn = !!p.settings.hijri; p.reparseAll(); for (const v of p.views()) { const b = v.containerEl.querySelector('.ofc-calendar-container'); if (b) { b.fcasFc && p.applyPrefs(b.fcasFc); p.paint(b); } } };
+		const save = async () => { await p.saveData(p.settings); hijriOn = !!p.settings.hijri; syncRoutine(p.settings); p.reparseAll(); for (const v of p.views()) { const b = v.containerEl.querySelector('.ofc-calendar-container'); if (b) { b.fcasFc && p.applyPrefs(b.fcasFc); p.paint(b); } } };
 		containerEl.createEl('p', { cls: 'setting-item-description', text: 'Restyles Full Calendar Remastered. These options only change how events are displayed; calendar data is never modified.' });
 		new Setting(containerEl).setName('First day of the week').setDesc('Used by the week, month, year and mini calendar views.')
 			.addDropdown(d => d.addOption('-1', 'Follow Full Calendar').addOption('1', 'Monday').addOption('0', 'Sunday').addOption('6', 'Saturday')
 				.setValue(String(p.settings.firstDay)).onChange(async v => { p.settings.firstDay = Number(v); await save(); }));
 		new Setting(containerEl).setName('Week view starts on today').setDesc('The week view shows a rolling seven days with today in the first column.')
 			.addToggle(t => t.setValue(!!p.settings.weekFromToday).onChange(async v => { p.settings.weekFromToday = v; await save(); }));
+		new Setting(containerEl).setName('Layered overlap layout').setDesc('Off by default (Apple Calendar places overlapping events side by side). On: overlapping events stack in layers with a visible side strip, and text steps down to fit. See docs/LAYOUT-RULES.md.')
+			.addToggle(t => t.setValue(!!p.settings.layered).onChange(async v => { p.settings.layered = v; await save(); }));
+		new Setting(containerEl).setName('Striped look for long repeating events').setDesc('Off by default (Apple Calendar does not do this). Repeating timed events at least as long as the threshold below are drawn striped, behind other events.')
+			.addToggle(t => t.setValue(!!p.settings.routine).onChange(async v => { p.settings.routine = v; await save(); }));
+		new Setting(containerEl).setName('Striped look threshold (minutes)').setDesc('Minimum length for the striped look. Minimum 30.')
+			.addText(t => t.setValue(String(p.settings.routineMin)).onChange(async v => { const n = Number(v); if (n >= 30) { p.settings.routineMin = Math.round(n); await save(); } }));
+		new Setting(containerEl).setName('Calendar chips in the toolbar').setDesc('Off by default (Apple Calendar has none). Coloured rings in the toolbar: click one to show only that calendar, Shift-click to hide or show it.')
+			.addToggle(t => t.setValue(!!p.settings.chips).onChange(async v => { p.settings.chips = v; await save(); }));
+		new Setting(containerEl).setName('Busy-day shading in the year view').setDesc('Off by default (Apple Calendar does not shade days). Tints each day by how many events it has.')
+			.addToggle(t => t.setValue(!!p.settings.yearHeat).onChange(async v => { p.settings.yearHeat = v; await save(); }));
 		new Setting(containerEl).setName('Show Islamic calendar dates').setDesc('Adds the Islamic (civil) day next to each date, the month name in the title and in the year view.')
 			.addToggle(t => t.setValue(!!p.settings.hijri).onChange(async v => { p.settings.hijri = v; await save(); }));
 	}

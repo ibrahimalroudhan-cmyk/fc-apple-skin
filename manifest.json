@@ -1,7 +1,7 @@
 {
 	"id": "fc-apple-skin",
 	"name": "Apple Skin for Full Calendar",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"minAppVersion": "1.5.0",
 	"description": "Restyles Full Calendar Remastered to look like Apple Calendar: tinted events, now-line, year view, calendar chips and a mini calendar. Display only; your calendars are never modified.",
 	"author": "Ibrahim",

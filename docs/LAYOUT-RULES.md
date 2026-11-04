@@ -1,6 +1,6 @@
 # Overlap layout rules
 
-How timed events share a day column. Code: `layoutCol` in `main.js`; tunables are the named constants at its top, tagged with the rule number. Rule numbers are kept stable between versions.
+How timed events share a day column when the optional "Layered overlap layout" setting is on (by default overlapping events sit side by side, as in Apple Calendar). Code: `layoutCol` in `main.js`; tunables are the named constants at its top, tagged with the rule number. Rule numbers are kept stable between versions.
 
 Rules use event properties only (duration, overlap amount), never event names.
 

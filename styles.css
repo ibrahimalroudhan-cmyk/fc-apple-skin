@@ -53,7 +53,7 @@
 .fcas .fc-col-header-cell-cushion{ flex-direction: column; gap: 0; }
 .fcas .fcas-top{ display: inline-flex; align-items: center; gap: 6px; }
 .fcas .fcas-hijri{ font-size: 11px; font-weight: 400; color: var(--text-faint); line-height: 1.2; margin-top: 1px; }
-.fcas .fcas-dow{ color: var(--text-muted); font-weight: 500; }
+.fcas .fcas-dow{ color: var(--text-normal); font-weight: 400; }
 .fcas .fcas-num{
 	min-width: 26px; height: 26px; padding: 0 4px; box-sizing: border-box;
 	display: inline-flex; align-items: center; justify-content: center; border-radius: 13px;
@@ -61,7 +61,8 @@
 }
 .fcas .fc-day-today .fcas-dow{ color: var(--text-normal); }
 .fcas .fc-day-today .fcas-num{ background: var(--fcas-red); color: #fff; }
-.fcas .fc-dayGridMonth-view .fc-col-header-cell-cushion{ font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.fcas .fc-dayGridMonth-view .fc-col-header-cell-cushion{ font-size: 13px; font-weight: 500; }
+.fcas .fc-dayGridMonth-view .fc-col-header-cell{ text-align: right; }
 .fcas .fc-daygrid-day-number{ font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: none !important; padding: 4px 6px; }
 .fcas .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{
 	background: var(--fcas-red); color: #fff; border-radius: 12px; min-width: 22px; text-align: center; margin: 2px; padding: 2px 6px;
@@ -113,7 +114,7 @@
 .fcas .fc-timegrid-event-short .fc-event-main{ padding: 0 4px; font-size: 11px; line-height: 1.25; }
 .fcas .fc-timegrid-event-short .fc-event-main-frame{ flex-direction: row; justify-content: flex-start; align-items: center; overflow: hidden; }
 .fcas .fc-timegrid-event-short .fc-event-title-container{ min-width: 0; flex: 1 1 auto; }
-.fcas .fc-timegrid-event-short .fc-event-time{ display: none; }
+.fcas .fc-timegrid-event.fc-timegrid-event-short .fc-event-time{ display: none; }
 .fcas .fc-timegrid-event-short .fc-event-title{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
 .fcas .fc-timegrid-event-short{ min-height: 16px; }
 .fcas .fc-daygrid-dot-event .fc-event-time{ color: var(--text-muted); font-weight: 400; }
@@ -134,8 +135,6 @@
 }
 .fcas .fcas-seg button:hover{ color: var(--text-normal); }
 .fcas .fcas-seg button.is-active{ background: color-mix(in srgb, var(--text-normal) 14%, transparent); color: var(--text-normal); }
-/* weekend headers muted, Islamic month in the corner (when enabled) */
-.fcas .fc-col-header-cell.fc-day-sat:not(.fc-day-today) .fcas-top, .fcas .fc-col-header-cell.fc-day-sun:not(.fc-day-today) .fcas-top{ opacity: .55; }
 .fcas .fc-scrollgrid-section-header .fc-timegrid-axis{ vertical-align: bottom; }
 .fcas .fcas-hmonth{ display: block; font-size: 10px; line-height: 1.15; color: var(--text-faint); padding: 0 4px 6px 2px; text-align: right; white-space: normal; }
 .fcas .fcas-hijri.is-first{ color: var(--text-muted); }
@@ -190,15 +189,14 @@
 .fcas .fcas-yday.is-hfirst{ text-decoration: underline; text-decoration-color: var(--fcas-red); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .fcas .fcas-yday.is-today{ background: var(--fcas-red) !important; color: #fff; border-radius: 50%; font-weight: 600; }
 
-/* Full Calendar's blue halo on the current/next event, toned down: a thin ring in the event's own colour */
+/* Full Calendar's halo on the current/next event is switched off: Apple Calendar has none */
 .fcas .ofc-event-current-or-next-harness{ filter: none !important; }
-.fcas .fc .fc-event.ofc-event-current-or-next{
-	box-shadow: 0 0 0 1px var(--background-primary), 0 0 0 2.5px color-mix(in srgb, var(--ev) 75%, #fff), 0 0 10px color-mix(in srgb, var(--ev) 35%, transparent) !important;
-	outline: none !important;
-}
+.fcas.fc .fc-event.ofc-event-current-or-next, .fcas.fc .fc-daygrid-event.ofc-event-current-or-next{ box-shadow: none !important; outline: none !important; }
 
 /* ---------- Month view ---------- */
-.fcas .fc-daygrid-day-top{ display: flex; flex-direction: row !important; justify-content: space-between; align-items: baseline; }
+.fcas .fc-daygrid-day-top{ display: flex; flex-direction: row !important; justify-content: flex-end !important; align-items: baseline; }
+.fcas .fc-daygrid-day-number[data-fcas-mon]::after{ content: ' ' attr(data-fcas-mon); }
+.fcas .fcas-mhijri{ margin-right: auto; }
 .fcas .fcas-mhijri{ font-size: 11px; color: var(--text-faint); padding: 4px 6px; }
 .fcas .fcas-mhijri.is-first{ color: var(--fcas-red); text-decoration: underline; text-underline-offset: 3px; }
 .fcas .fc-daygrid-dot-event{ display: flex; align-items: center; padding: 0 2px; margin-top: 1px; font-size: 11.5px; }
@@ -265,9 +263,9 @@
 .fcas .fcas-chip.is-off::before{ opacity: .3; }
 .fcas .fcas-chip.is-solo::before{ background: var(--c); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 35%, transparent); }
 /* day header: one line "Fri 30 18" */
-.fcas .fc-col-header-cell-cushion{ flex-direction: row !important; align-items: baseline; gap: 5px; padding: 3px 2px 3px !important; font-size: 12px; }
+.fcas .fc-col-header-cell-cushion{ flex-direction: row !important; align-items: baseline; gap: 5px; padding: 4px 2px 4px !important; font-size: 15px; }
 .fcas .fcas-top{ gap: 4px; align-items: center; }
-.fcas .fcas-num{ min-width: 20px; height: 20px; border-radius: 10px; font-size: 13px; padding: 0 3px; }
+.fcas .fcas-num{ min-width: 24px; height: 24px; border-radius: 12px; font-size: 15px; font-weight: 400; padding: 0 3px; }
 .fcas .fcas-hijri{ font-size: 10px; margin: 0; }
 /* time column: narrow, no corner text */
 .fcas .fc-timegrid-slot-label-cushion{ font-size: 10px; padding: 0 3px 0 2px; }
@@ -368,9 +366,6 @@
 /* R11: one-line events: pill and time on one centre line, a small gap, no FC dash */
 .fcas .fc-timegrid-event-short .fc-event-main-frame{ align-items: center; gap: 5px; }
 .fcas .fc-timegrid-event-short .fc-event-title-container{ display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
-.fcas .fc-timegrid-event-short .fc-event-time{ flex: none; margin: 0; line-height: 16px; height: 16px; white-space: nowrap; }
-.fcas .fc-timegrid-event-short .fc-event-time::after{ content: none; }
-.fcas .fc-timegrid-event-short .fc-event-time{ font-size: 10px; }
 /* R4b: the top box's text drops below the text behind */
 .fcas .fc-timegrid-event.fcas-drop .fc-event-main{ padding-top: calc(3px + var(--fcas-drop, 0px)); }
 
@@ -417,3 +412,4 @@
 
 /* Full Calendar 0.13+ adds an agenda list under the month grid; the year view replaces the whole grid, so hide it there */
 .ofc-calendar-shell:has(> .fcas-year-on) .ofc-mobile-agenda{ display: none !important; }
+.fcas.fc .fc-daygrid-dot-event.ofc-event-current-or-next{ background: transparent !important; border-color: transparent !important; }
